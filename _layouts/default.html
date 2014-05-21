@@ -1,6 +1,14 @@
----
-theme :
-  name : bootstrap-3
----
-{% include JB/setup %}
-{% include themes/bootstrap-3/default.html %}
+<!DOCTYPE html>
+<html lang="fr">
+{% include head.html %}
+<body>
+    <div class="container">
+		{% include header.html %}
+		<div>{{ content }}</div>
+		<div class="footer">
+			<p>&copy; Company 2014</p>
+		</div>
+    </div>
+</body>
+</html>
+
