@@ -2,7 +2,8 @@
 permalink: /:categories/:year/:month/:day/:title 
 
 exclude: [".rvmrc", ".rbenv-version", "README.md", "Rakefile", "changelog.md"]
-pygments: true
+
+highlighter: pygments
 
 encoding: utf-8
 
