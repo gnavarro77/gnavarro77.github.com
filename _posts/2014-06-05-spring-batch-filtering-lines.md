@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Spring Batch, Filtering lines
+title: Spring Batch, Filtering Records
 tags : [Spring, Batch, Spring Batch]
 ---
 
