@@ -1,0 +1,3 @@
+Tony Parker,2013-14,16.7
+Joakim Noah,2013-14,12.6
+Nicolas Batum,2013-14,13.0
