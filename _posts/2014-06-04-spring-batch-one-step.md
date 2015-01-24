@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: hellish-simplicity-post
 title: Spring Batch, Step One
 categorie: Spring Batch
 tags : [Spring, Batch, Spring Batch]

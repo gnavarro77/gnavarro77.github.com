@@ -1,28 +1,8 @@
 ---
-layout: post
+layout: hellish-simplicity-post
 title: Design exercice
 tags : [conception, design]
 ---
-
-<script>
-// Run the code after document is loaded
-$( document ).ready(function() {
-	// Object handling communication between the differents elements. (see mediator design pattern) 
-	var mediator = {
-		targets : $('table td:nth-child(2) input'), // Elements of the second column
-		setBackgroundColor : function(index, color){
-			$(this.targets[index]).css("background-color", color);
-		}
-	};
-	// Bind change event to the elements of the first column
-	$('table tr td:nth-child(1) select').each(function(index){
-		// Note that we pass the index value to the function called on the 'change' event
-		$(this).bind('change', { index : index}, function(event){
-			mediator.setBackgroundColor(event.data.index, $(this).val());
-		});
-	});
-});	
-</script>
 
 ## Exercice
 
@@ -115,3 +95,24 @@ $( document ).ready(function() {
 <div class="col-md-4">
 </div>
 </div>
+
+
+<script>
+// Run the code after document is loaded
+$( document ).ready(function() {
+	// Object handling communication between the differents elements. (see mediator design pattern) 
+	var mediator = {
+		targets : $('table td:nth-child(2) input'), // Elements of the second column
+		setBackgroundColor : function(index, color){
+			$(this.targets[index]).css("background-color", color);
+		}
+	};
+	// Bind change event to the elements of the first column
+	$('table tr td:nth-child(1) select').each(function(index){
+		// Note that we pass the index value to the function called on the 'change' event
+		$(this).bind('change', { index : index}, function(event){
+			mediator.setBackgroundColor(event.data.index, $(this).val());
+		});
+	});
+});	
+</script>

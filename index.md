@@ -1,7 +1,7 @@
 ---
-layout: default
+layout: hellish-simplicity-default
 title: Blog
 tagline: Supporting tagline
 ---
 
-Hello
+Hello 2

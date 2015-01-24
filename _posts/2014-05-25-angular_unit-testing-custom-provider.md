@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: hellish-simplicity-post
 title: Angularjs, Unit Testing Custom Provider
 tags : [angularjs, angularjs unit test]
 ---

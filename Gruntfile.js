@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 	    },
 	    build : {
 		files : {
-		    'assets/css/blog.css' : 'assets/sass/blog.css'
+		    'assets/theme/hellish-simplicity/style.css' : 'assets/theme/hellish-simplicity/style.scss'
 		}
 	    }
 	},

@@ -1,5 +1,5 @@
 ---
-layout: post
+layout: hellish-simplicity-post
 title: Spring Batch, Included Fields
 tags : [Spring, Batch, Spring Batch, DelimitedLineTokenizer]
 ---
