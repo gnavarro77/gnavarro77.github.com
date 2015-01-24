@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Blog">
+<meta name="author" content="Gilles Navarro">
+
+<title>Design exercice</title> 
+
+<link rel="stylesheet"
+	href="/assets/bower_components/bootstrap-css/css/bootstrap.css">
+<link rel="stylesheet"
+	href="/assets/bower_components/bootstrap-css/css/bootstrap-theme.css">
+<link rel="stylesheet" href="/assets/css/solarized.css">
+<link rel="stylesheet" href="/assets/theme/hellish-simplicity/style.css">
+
+<script type="text/javascript"
+		src="/assets/bower_components/jquery/dist/jquery.min.js"></script>
+
+</head>
+<body>
+
+	<header id="site-header" role="banner">
+		<div class="hgroup">
+			<h1>De choses et d'autres</h1>
+			<h2></h2>
+		</div>
+	</header>
+
+	<div id="main" class="site-main">
+		<div id="content-area">
+			<div id="site-content" role="main"><article class="post type-post status-publish format-standard hentry category-uncategorized tag-boat tag-lake">
+	<header class="entry-header">
+		<h1 class="entry-title">Design exercice </h1>
+	</header>
+	<div class="date">
+      <span>07 September 2014</span>
+    </div>
+	<div class="entry-content">
+		<h2 id="exercice">Exercice</h2>
+
+<p>We have a table with two columns. The first one is used to pick up the background color of the second. <br />
+To do that we will use <code>JQuery</code>.</p>
+
+<table class="table table-bordered table-striped">
+	<thead>
+		<tr>
+			<th>Pick a color</th>
+			<th>Change the input background</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr>
+			<td>
+				<select class="form-control">
+				  <option></option>
+				  <option>CadetBlue</option>
+				  <option>DarkSlateBlue</option>
+				  <option>Indigo</option>
+				  <option>Lavender</option>
+				  <option>LightSteelBlue</option>
+				</select>
+			</td>
+			<td>
+				<input type="text" class="form-control" />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<select class="form-control">
+				  <option></option>
+				  <option>CadetBlue</option>
+				  <option>DarkSlateBlue</option>
+				  <option>Indigo</option>
+				  <option>Lavender</option>
+				  <option>LightSteelBlue</option>
+				</select>
+			</td>
+			<td>
+				<input type="text" class="form-control" />
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<select class="form-control">
+				  <option></option>
+				  <option>CadetBlue</option>
+				  <option>DarkSlateBlue</option>
+				  <option>Indigo</option>
+				  <option>Lavender</option>
+				  <option>LightSteelBlue</option>
+				</select>
+			</td>
+			<td>
+				<input type="text" class="form-control" />
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+<h2 id="implementation">Implementation</h2>
+
+<div class="row">
+<div class="col-md-12">
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="o">&lt;</span><span class="nx">script</span><span class="o">&gt;</span>
+<span class="c1">// Run the code after document is loaded</span>
+<span class="nx">$</span><span class="p">(</span> <span class="nb">document</span> <span class="p">).</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+	<span class="c1">// Object handling communication between the differents elements. (see mediator design pattern) </span>
+	<span class="kd">var</span> <span class="nx">mediator</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="nx">targets</span> <span class="o">:</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;table td:nth-child(2) input&#39;</span><span class="p">),</span> <span class="c1">// Elements of the second column</span>
+		<span class="nx">setBackgroundColor</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">index</span><span class="p">,</span> <span class="nx">color</span><span class="p">){</span>
+			<span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">targets</span><span class="p">[</span><span class="nx">index</span><span class="p">]).</span><span class="nx">css</span><span class="p">(</span><span class="s2">&quot;background-color&quot;</span><span class="p">,</span> <span class="nx">color</span><span class="p">);</span>
+		<span class="p">}</span>
+	<span class="p">};</span>
+	<span class="c1">// Bind change event to the elements of the first column</span>
+	<span class="nx">$</span><span class="p">(</span><span class="s1">&#39;table tr td:nth-child(1) select&#39;</span><span class="p">).</span><span class="nx">each</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">index</span><span class="p">){</span>
+		<span class="c1">// Note that we pass the index value to the function called on the &#39;change&#39; event</span>
+		<span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">index</span> <span class="o">:</span> <span class="nx">index</span><span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">){</span>
+			<span class="nx">mediator</span><span class="p">.</span><span class="nx">setBackgroundColor</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">index</span><span class="p">,</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">val</span><span class="p">());</span>
+		<span class="p">});</span>
+	<span class="p">});</span>
+<span class="p">});</span>	
+<span class="o">&lt;</span><span class="err">/script&gt;</span></code></pre></div>
+
+</div>
+<div class="col-md-4">
+</div>
+</div>
+
+<script>
+// Run the code after document is loaded
+$( document ).ready(function() {
+	// Object handling communication between the differents elements. (see mediator design pattern) 
+	var mediator = {
+		targets : $('table td:nth-child(2) input'), // Elements of the second column
+		setBackgroundColor : function(index, color){
+			$(this.targets[index]).css("background-color", color);
+		}
+	};
+	// Bind change event to the elements of the first column
+	$('table tr td:nth-child(1) select').each(function(index){
+		// Note that we pass the index value to the function called on the 'change' event
+		$(this).bind('change', { index : index}, function(event){
+			mediator.setBackgroundColor(event.data.index, $(this).val());
+		});
+	});
+});	
+</script>
+
+
+	</div>
+	<footer class="entry-meta">
+		
+	</footer>
+</article></div>
+			<div id="sidebar" role="complementary">
+<!-- 				<aside> -->
+<!-- 					<h1 class="widget-title">Recent Posts</h1> -->
+<!-- 					<ul> -->
+<!-- 						<li><a href="https://wp-themes.com/?p=19" -->
+<!-- 							title="Look Worth A Thousand Words">Worth A Thousand Words</a></li> -->
+<!-- 						<li><a href="https://wp-themes.com/?p=36" -->
+<!-- 							title="Look Elements">Elements</a></li> -->
+<!-- 						<li><a href="https://wp-themes.com/?p=14" -->
+<!-- 							title="Look More Tags">More Tags</a></li> -->
+<!-- 						<li><a href="https://wp-themes.com/?p=8" title="Look HTML">HTML</a></li> -->
+<!-- 						<li><a href="https://wp-themes.com/?p=6" title="Look Links">Links</a></li> -->
+<!-- 						<li><a href="https://wp-themes.com/?p=4" -->
+<!-- 							title="Look Category Hierarchy">Category Hierarchy</a></li> -->
+<!-- 						<li><a href="https://wp-themes.com/?p=1" -->
+<!-- 							title="Look Hello world!">Hello world!</a></li> -->
+<!-- 					</ul> -->
+<!-- 				</aside> -->
+				<aside>
+					<h1 class="widget-title">Archives</h1>
+<ul class="list-unstyled">
+
+
+  
+  
+  
+  
+  
+  
+    <li>
+    	<a href="/2014/09/index.html">September 2014</a>
+    </li>
+     
+  
+
+  
+  
+  
+  
+  
+  
+    <li>
+    	<a href="/2014/06/index.html">June 2014</a>
+    </li>
+     
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  
+  
+  
+  
+    <li>
+    	<a href="/2014/05/index.html">May 2014</a>
+    </li>
+     
+  
+
+  
+</ul>
+
+
+				</aside>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+</html>
+

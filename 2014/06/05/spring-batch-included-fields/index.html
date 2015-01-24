@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Blog">
+<meta name="author" content="Gilles Navarro">
+
+<title>Spring Batch, Included Fields</title> 
+
+<link rel="stylesheet"
+	href="/assets/bower_components/bootstrap-css/css/bootstrap.css">
+<link rel="stylesheet"
+	href="/assets/bower_components/bootstrap-css/css/bootstrap-theme.css">
+<link rel="stylesheet" href="/assets/css/solarized.css">
+<link rel="stylesheet" href="/assets/theme/hellish-simplicity/style.css">
+
+<script type="text/javascript"
+		src="/assets/bower_components/jquery/dist/jquery.min.js"></script>
+
+</head>
+<body>
+
+	<header id="site-header" role="banner">
+		<div class="hgroup">
+			<h1>De choses et d'autres</h1>
+			<h2></h2>
+		</div>
+	</header>
+
+	<div id="main" class="site-main">
+		<div id="content-area">
+			<div id="site-content" role="main"><article class="post type-post status-publish format-standard hentry category-uncategorized tag-boat tag-lake">
+	<header class="entry-header">
+		<h1 class="entry-title">Spring Batch, Included Fields </h1>
+	</header>
+	<div class="date">
+      <span>05 June 2014</span>
+    </div>
+	<div class="entry-content">
+		<p>This post is a tip on the <code>DelimitedLineTokenizer</code> class. </p>
+
+<p>We want to go from a flat file line like this</p>
+
+<pre><code>Tony Parker,2013-14,,,,,16.7,,,
+</code></pre>
+
+<p>to an instance of <code>StatisticBean</code></p>
+
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="kn">package</span> <span class="n">gnavarro77</span><span class="o">.</span><span class="na">blog</span><span class="o">.</span><span class="na">spring</span><span class="o">.</span><span class="na">batch</span><span class="o">.</span><span class="na">bean</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">StatisticBean</span> <span class="o">{</span>
+	<span class="c1">// player&#39;s name</span>
+	<span class="kd">private</span> <span class="n">String</span> <span class="n">player</span><span class="o">;</span>
+	<span class="c1">// season</span>
+	<span class="kd">private</span> <span class="n">String</span> <span class="n">season</span><span class="o">;</span>
+	<span class="c1">// average points per game</span>
+	<span class="kd">private</span> <span class="kt">float</span> <span class="n">appg</span><span class="o">;</span>
+
+	<span class="kd">public</span> <span class="n">String</span> <span class="nf">getPlayer</span><span class="o">()</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="n">player</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setPlayer</span><span class="o">(</span><span class="n">String</span> <span class="n">player</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">player</span> <span class="o">=</span> <span class="n">player</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="n">String</span> <span class="nf">getSeason</span><span class="o">()</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="n">season</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setSeason</span><span class="o">(</span><span class="n">String</span> <span class="n">season</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">season</span> <span class="o">=</span> <span class="n">season</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="kt">float</span> <span class="nf">getAppg</span><span class="o">()</span> <span class="o">{</span>
+		<span class="k">return</span> <span class="n">appg</span><span class="o">;</span>
+	<span class="o">}</span>
+
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">setAppg</span><span class="o">(</span><span class="kt">float</span> <span class="n">appg</span><span class="o">)</span> <span class="o">{</span>
+		<span class="k">this</span><span class="o">.</span><span class="na">appg</span> <span class="o">=</span> <span class="n">appg</span><span class="o">;</span>
+	<span class="o">}</span>
+
+<span class="o">}</span></code></pre></div>
+
+<p>To ignore the blank values we are going to specify the fields to include through the use <br />
+of the <code>includedFields</code>  attribut of the <code>DelimitedLineTokenizer</code> class.</p>
+
+<p>Below is a demonstration of the complete solution.</p>
+
+<div class="highlight"><pre><code class="language-java" data-lang="java"><span class="kn">package</span> <span class="n">gnavarro77</span><span class="o">.</span><span class="na">blog</span><span class="o">.</span><span class="na">spring</span><span class="o">.</span><span class="na">batch</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">hamcrest</span><span class="o">.</span><span class="na">CoreMatchers</span><span class="o">.</span><span class="na">is</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">gnavarro77.blog.spring.batch.bean.StatisticBean</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">org.junit.Assert</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.junit.Test</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.batch.item.file.mapping.FieldSetMapper</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.batch.item.file.transform.DelimitedLineTokenizer</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.springframework.validation.BindException</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">IncludeFieldsTest</span> <span class="o">{</span>
+
+	<span class="nd">@Test</span>
+	<span class="kd">public</span> <span class="kt">void</span> <span class="nf">test</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">BindException</span> <span class="o">{</span>
+		<span class="n">String</span> <span class="n">line</span> <span class="o">=</span> <span class="s">&quot;Tony Parker,2013-14,,,,,16.7,,,&quot;</span><span class="o">;</span>
+		<span class="n">DelimitedLineTokenizer</span> <span class="n">tokenizer</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">DelimitedLineTokenizer</span><span class="o">();</span>
+		<span class="c1">// names match StatisticBean properties for usage of</span>
+		<span class="c1">// BeanWrapperFieldSetMapper</span>
+		<span class="n">tokenizer</span><span class="o">.</span><span class="na">setNames</span><span class="o">(</span><span class="k">new</span> <span class="n">String</span><span class="o">[]</span> <span class="o">{</span> <span class="s">&quot;player&quot;</span><span class="o">,</span> <span class="s">&quot;season&quot;</span><span class="o">,</span> <span class="s">&quot;appg&quot;</span> <span class="o">});</span>
+		<span class="c1">// specify the fields to include</span>
+		<span class="n">tokenizer</span><span class="o">.</span><span class="na">setIncludedFields</span><span class="o">(</span><span class="k">new</span> <span class="kt">int</span><span class="o">[]</span> <span class="o">{</span> <span class="mi">0</span><span class="o">,</span> <span class="mi">1</span><span class="o">,</span> <span class="mi">6</span> <span class="o">});</span>
+		<span class="n">FieldSetMapper</span><span class="o">&lt;</span><span class="n">StatisticBean</span><span class="o">&gt;</span> <span class="n">fieldSetMapper</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BeanWrapperFieldSetMapper</span><span class="o">&lt;</span><span class="n">StatisticBean</span><span class="o">&gt;();</span>
+		<span class="o">((</span><span class="n">BeanWrapperFieldSetMapper</span><span class="o">&lt;</span><span class="n">StatisticBean</span><span class="o">&gt;)</span> <span class="n">fieldSetMapper</span><span class="o">)</span>
+				<span class="o">.</span><span class="na">setTargetType</span><span class="o">(</span><span class="n">StatisticBean</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+		<span class="n">StatisticBean</span> <span class="n">bean</span> <span class="o">=</span> <span class="n">fieldSetMapper</span><span class="o">.</span><span class="na">mapFieldSet</span><span class="o">(</span><span class="n">tokenizer</span>
+				<span class="o">.</span><span class="na">tokenize</span><span class="o">(</span><span class="n">line</span><span class="o">));</span>
+		<span class="n">Assert</span><span class="o">.</span><span class="na">assertThat</span><span class="o">(</span><span class="n">bean</span><span class="o">.</span><span class="na">getPlayer</span><span class="o">(),</span> <span class="n">is</span><span class="o">(</span><span class="s">&quot;Tony Parker&quot;</span><span class="o">));</span>
+		<span class="n">Assert</span><span class="o">.</span><span class="na">assertThat</span><span class="o">(</span><span class="n">bean</span><span class="o">.</span><span class="na">getSeason</span><span class="o">(),</span> <span class="n">is</span><span class="o">(</span><span class="s">&quot;2013-14&quot;</span><span class="o">));</span>
+		<span class="n">Assert</span><span class="o">.</span><span class="na">assertThat</span><span class="o">(</span><span class="n">bean</span><span class="o">.</span><span class="na">getAppg</span><span class="o">(),</span> <span class="n">is</span><span class="o">((</span><span class="kt">float</span><span class="o">)</span> <span class="mf">16.7</span><span class="o">));</span>
+	<span class="o">}</span>
+<span class="o">}</span></code></pre></div>
+
+	</div>
+	<footer class="entry-meta">
+		
+	</footer>
+</article></div>
+			<div id="sidebar" role="complementary">
+<!-- 				<aside> -->
+<!-- 					<h1 class="widget-title">Recent Posts</h1> -->
+<!-- 					<ul> -->
+<!-- 						<li><a href="https://wp-themes.com/?p=19" -->
+<!-- 							title="Look Worth A Thousand Words">Worth A Thousand Words</a></li> -->
+<!-- 						<li><a href="https://wp-themes.com/?p=36" -->
+<!-- 							title="Look Elements">Elements</a></li> -->
+<!-- 						<li><a href="https://wp-themes.com/?p=14" -->
+<!-- 							title="Look More Tags">More Tags</a></li> -->
+<!-- 						<li><a href="https://wp-themes.com/?p=8" title="Look HTML">HTML</a></li> -->
+<!-- 						<li><a href="https://wp-themes.com/?p=6" title="Look Links">Links</a></li> -->
+<!-- 						<li><a href="https://wp-themes.com/?p=4" -->
+<!-- 							title="Look Category Hierarchy">Category Hierarchy</a></li> -->
+<!-- 						<li><a href="https://wp-themes.com/?p=1" -->
+<!-- 							title="Look Hello world!">Hello world!</a></li> -->
+<!-- 					</ul> -->
+<!-- 				</aside> -->
+				<aside>
+					<h1 class="widget-title">Archives</h1>
+<ul class="list-unstyled">
+
+
+  
+  
+  
+  
+  
+  
+    <li>
+    	<a href="/2014/09/index.html">September 2014</a>
+    </li>
+     
+  
+
+  
+  
+  
+  
+  
+  
+    <li>
+    	<a href="/2014/06/index.html">June 2014</a>
+    </li>
+     
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  
+  
+  
+  
+
+  
+  
+  
+  
+  
+  
+    <li>
+    	<a href="/2014/05/index.html">May 2014</a>
+    </li>
+     
+  
+
+  
+</ul>
+
+
+				</aside>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+</html>
+
