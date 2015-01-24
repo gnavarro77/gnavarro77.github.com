@@ -13,3 +13,7 @@ target
 *.class
 *.project
 *.classpath
+
+node_modules
+.settings
+.sass-cache

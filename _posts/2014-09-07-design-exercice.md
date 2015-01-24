@@ -29,8 +29,6 @@ $( document ).ready(function() {
 We have a table with two columns. The first one is used to pick up the background color of the second. 
 To do that we will use `JQuery`.
 
-
-<div class="row">
 <table class="table table-bordered table-striped">
 	<thead>
 		<tr>
@@ -86,8 +84,6 @@ To do that we will use `JQuery`.
 		</tr>
 	</tbody>
 </table>
-
-</div>
 
 ## Implementation
 
