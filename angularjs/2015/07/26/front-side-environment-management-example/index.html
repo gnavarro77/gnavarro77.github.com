@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="Blog">
+<meta name="author" content="Gilles Navarro">
+
+<title>Front side environment management example</title> 
+
+<link rel="stylesheet"
+	href="/assets/bower_components/bootstrap-css/css/bootstrap.css">
+<link rel="stylesheet"
+	href="/assets/bower_components/bootstrap-css/css/bootstrap-theme.css">
+<link rel="stylesheet" href="/assets/css/solarized.css">
+<link rel="stylesheet"
+	href="/assets/bower_components/font-awesome/css/font-awesome.min.css">
+<link rel="stylesheet" href="/assets/css/blog.css">
+
+<script type="text/javascript"
+	src="/assets/bower_components/jquery/dist/jquery.min.js"></script>
+
+</head>
+<body>
+<body>
+
+	<nav class="navbar navbar-default navbar-static-top">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">De choses et d'autres</a>
+			</div>
+			<div id="navbar" class="navbar-collapse collapse">
+<!-- 				<ul class="nav navbar-nav"> -->
+<!-- 					<li class="active"><a href="#">Home</a></li> -->
+<!-- 				</ul> -->
+				<ul class="nav navbar-nav navbar-right">
+					<li><a href="https://github.com/gnavarro77" title="find me on github"><i class="fa fa-github"></i></a></li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container">
+
+		<div class="row">
+
+			<div class="col-sm-8 blog-main"><div class="blog-post">
+	<h2 class="blog-post-title">
+		Front side environment management example 
+	</h2>
+	<p class="blog-post-meta">
+		July 26, 2015 by <a href="#">Gilles Navarro</a>
+	</p>
+	<p><blockquote>
+  <p>In this post we will consider a front side application built using <code>AngularJS</code>, <code>Grunt</code>, <code>Bower</code> as part of its technical stack.</p>
+</blockquote>
+
+<blockquote>
+  <p>For the purpose of this example we will only consider <code>development</code> and <code>production</code> environments.</p>
+</blockquote>
+
+<h3 id="why-the-dev-and-the-production-environments-should-differ">Why the <code>dev</code> and the <code>production</code> environments should differ?</h3>
+
+<p>In development stage, we need the changes made to <code>html</code> markup or the <code>javascript</code> code to be made available to the browser as quick as possible. In most cases loading time of a the initial page is not a big concern. Moreover the <code>javascript</code> code must support debbuging.</p>
+
+<p>In production, the main concern is to make the ui as 'quick' as possible; The time needed to display a fragment of the ui must be reduce to the minimum. Some of the most common means to meet those goals are :</p>
+
+<ul>
+  <li>minifying and compressing <code>css</code> files</li>
+  <li>minifying and compressing <code>javascript</code> files</li>
+  <li>for <code>AngularJS</code>, minifying, combining, and automatically caching your HTML</li>
+</ul>
+
+<p>You can also consider using <code>javascript</code> optimizer tools such as <a href="https://developers.google.com/closure">google closure</a>.</p>
+
+<h3 id="example">Example</h3>
+
+<p>In <code>dev</code> we will inject the <code>bower</code> dependencies and the application resources in two different locations of the <code>index.html</code> using the <code>Grunt</code> plugin <code>grunt-injector</code>.</p>
+
+<p>First we had the placeholders required for injection in the <code>index.html</code>.</p>
+
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+<span class="c">&lt;!-- bower:css --&gt;</span>
+// bower css dependencies
+<span class="c">&lt;!-- endbower --&gt;</span>
+
+
+<span class="c">&lt;!-- injector:css --&gt;</span>
+// application specific css injection
+<span class="c">&lt;!-- endinjector --&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+
+<span class="c">&lt;!-- bower:js --&gt;</span>
+// bower js dependencies
+<span class="c">&lt;!-- endbower --&gt;</span>
+
+<span class="c">&lt;!-- injector:css --&gt;</span>
+// application js injection
+<span class="c">&lt;!-- endinjector --&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/head&gt;</span></code></pre></div>
+
+<p>then we declare the injection into the <code>Gruntfile.js</code> (customize to match your project structure).</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">injector</span> <span class="o">:</span> <span class="p">{</span>
+		<span class="c1">// inject bower css and js dependencies into the file index.html</span>
+	    <span class="nx">bower</span> <span class="o">:</span> <span class="p">{</span>
+			<span class="nx">options</span> <span class="o">:</span> <span class="p">{</span>
+			    <span class="nx">starttag</span> <span class="o">:</span> <span class="s1">&#39;&lt;!-- bower: --&gt;&#39;</span><span class="p">,</span>
+			    <span class="nx">endtag</span> <span class="o">:</span> <span class="s1">&#39;&lt;!-- endbower --&gt;&#39;</span><span class="p">,</span>
+			    <span class="nx">addRootSlash</span> <span class="o">:</span> <span class="kc">false</span> <span class="c1">// depends on your project</span>
+			<span class="p">},</span>
+			<span class="nx">files</span> <span class="o">:</span> <span class="p">{</span>
+			    <span class="s1">&#39;index.html&#39;</span> <span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;bower.json&#39;</span> <span class="p">],</span>
+			<span class="p">}</span>
+	    <span class="p">},</span>
+	    <span class="c1">// </span>
+	    <span class="nx">app</span> <span class="o">:</span> <span class="p">{</span>
+			<span class="nx">options</span> <span class="o">:</span> <span class="p">{</span>
+			    <span class="nx">addRootSlash</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="c1">// depends on your project</span>
+			    <span class="nx">relative</span> <span class="o">:</span> <span class="kc">true</span> <span class="c1">// depends on your project</span>
+			<span class="p">},</span>
+			<span class="nx">files</span> <span class="o">:</span> <span class="p">{</span>
+			    <span class="s1">&#39;index.html&#39;</span> <span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;ordered application js files&#39;</span><span class="p">,</span> <span class="s1">&#39;another file&#39;</span><span class="p">,</span> <span class="s1">&#39;...&#39;</span> <span class="p">],</span>
+			<span class="p">}</span>
+	    <span class="p">}</span>
+	<span class="p">}</span></code></pre></div>
+
+<p>and with the following registered <code>Grunt</code> task</p>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">grunt</span><span class="p">.</span><span class="nx">registerTask</span><span class="p">(</span><span class="s1">&#39;build:dev&#39;</span><span class="p">,</span> <span class="p">[</span> <span class="s1">&#39;injector:bower&#39;</span><span class="p">,</span> <span class="s1">&#39;injector:app&#39;</span> <span class="p">]);</span></code></pre></div>
+
+<p>calling <code>grunt build:dev</code> will inject all the css and js files into the file <code>index.html</code>.</p>
+
+<hr />
+
+<p>For production we want to have the bower dependencies minified and concatened into a single file. In this example I decided to use the minified version published within the bower dependency package (note that none might exists and the unminified version will be used in that case).<br />
+As the order in which files are concatened is imperative I use a trick and use the dependency resolution of <code>grunt-injector</code> to have the files in the right order.</p>
+
+<p>The grunt task to create and inject a minified and concatened version of the bower dependencies into the <code>index.html</code> file do the following steps :</p>
+
+<ul>
+  <li>create two files to write the dependencies, one for the <code>js</code> dependencies and the other for the <code>css</code> dependencies</li>
+  <li>inject the dependencies into those files</li>
+  <li>copy the dependencies keeping the order</li>
+  <li>concatenate the files</li>
+  <li>copy the concatened files into the source code of the application</li>
+  <li>inject the concatened files into the <code>index.html</code> file</li>
+</ul>
+
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">grunt</span><span class="p">.</span><span class="nx">registerTask</span><span class="p">(</span><span class="s1">&#39;inject:bower:min:concat&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+	<span class="kd">var</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span>
+	<span class="kd">var</span> <span class="nx">log</span> <span class="o">=</span> <span class="nx">grunt</span><span class="p">.</span><span class="nx">log</span><span class="p">.</span><span class="nx">write</span><span class="p">;</span>
+	<span class="kd">var</span> <span class="nx">basename</span> <span class="o">=</span> <span class="s1">&#39;bower-deps&#39;</span><span class="p">,</span> <span class="nx">basedir</span> <span class="o">=</span> <span class="s1">&#39;target&#39;</span><span class="p">;</span>
+	<span class="kd">var</span> <span class="nx">dirs</span> <span class="o">=</span> <span class="p">{</span>
+	    <span class="nx">css</span> <span class="o">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">basedir</span><span class="p">,</span> <span class="s1">&#39;css&#39;</span><span class="p">),</span>
+	    <span class="nx">js</span> <span class="o">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">basedir</span><span class="p">,</span> <span class="s1">&#39;js&#39;</span><span class="p">)</span>
+	<span class="p">};</span>
+	<span class="kd">var</span> <span class="nx">files</span> <span class="o">=</span> <span class="p">{</span>
+	    <span class="nx">config</span> <span class="o">:</span> <span class="p">{</span>
+		<span class="nx">css</span> <span class="o">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">basedir</span><span class="p">,</span> <span class="nx">basename</span> <span class="o">+</span> <span class="s1">&#39;-css.txt&#39;</span><span class="p">),</span>
+		<span class="nx">js</span> <span class="o">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">basedir</span><span class="p">,</span> <span class="nx">basename</span> <span class="o">+</span> <span class="s1">&#39;-js.txt&#39;</span><span class="p">)</span>
+	    <span class="p">},</span>
+	    <span class="nx">out</span> <span class="o">:</span> <span class="p">{</span>
+		<span class="nx">css</span> <span class="o">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">basedir</span><span class="p">,</span> <span class="nx">basename</span> <span class="o">+</span> <span class="s1">&#39;.css&#39;</span><span class="p">),</span>
+		<span class="nx">js</span> <span class="o">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">basedir</span><span class="p">,</span> <span class="nx">basename</span> <span class="o">+</span> <span class="s1">&#39;.js&#39;</span><span class="p">)</span>
+	    <span class="p">}</span>
+	<span class="p">};</span>
+
+	<span class="kd">var</span> <span class="nx">configFiles</span> <span class="o">=</span> <span class="p">{};</span>
+	<span class="nx">configFiles</span><span class="p">[</span><span class="nx">files</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">js</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;bower.json&#39;</span> <span class="p">];</span>
+	<span class="nx">configFiles</span><span class="p">[</span><span class="nx">files</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">css</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;bower.json&#39;</span> <span class="p">];</span>
+
+	<span class="c1">// Write the bower dependencies resolved by the grunt-injector plugin to</span>
+	<span class="c1">// a config file</span>
+	<span class="nx">grunt</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">merge</span><span class="p">({</span>
+	    <span class="nx">injector</span> <span class="o">:</span> <span class="p">{</span>
+		<span class="nx">bower_all_config</span> <span class="o">:</span> <span class="p">{</span>
+		    <span class="nx">options</span> <span class="o">:</span> <span class="p">{</span>
+			<span class="nx">min</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="c1">// inject min version when available</span>
+			<span class="nx">addRootSlash</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+			<span class="nx">transform</span> <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">filepath</span><span class="p">,</span> <span class="nx">index</span><span class="p">)</span> <span class="p">{</span>
+			    <span class="k">return</span> <span class="nx">filepath</span><span class="p">;</span>
+			<span class="p">}</span>
+		    <span class="p">},</span>
+		    <span class="nx">files</span> <span class="o">:</span> <span class="nx">configFiles</span>
+		<span class="p">},</span>
+		<span class="c1">// inject the concatened bower dependencies to index.html</span>
+		<span class="nx">bower_all</span> <span class="o">:</span> <span class="p">{</span>
+		    <span class="nx">options</span> <span class="o">:</span> <span class="p">{</span>
+			<span class="nx">starttag</span> <span class="o">:</span> <span class="s1">&#39;&lt;!-- bower: --&gt;&#39;</span><span class="p">,</span>
+			<span class="nx">endtag</span> <span class="o">:</span> <span class="s1">&#39;&lt;!-- endbower --&gt;&#39;</span><span class="p">,</span>
+			<span class="nx">addRootSlash</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+			<span class="nx">relative</span> <span class="o">:</span> <span class="kc">true</span>
+		    <span class="p">},</span>
+		    <span class="nx">files</span> <span class="o">:</span> <span class="p">{</span>
+		    <span class="c1">// paths are up to your project structure</span>
+			<span class="s1">&#39;index.html&#39;</span> <span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;app/lib/*.css&#39;</span><span class="p">,</span> <span class="s1">&#39;app/lib/*.js&#39;</span> <span class="p">],</span>
+		    <span class="p">}</span>
+		<span class="p">}</span>
+	    <span class="p">}</span>
+	<span class="p">});</span>
+
+	<span class="c1">// Copy the dependencies of the config file to directory conserving the</span>
+	<span class="c1">// order resolved by the grunt-injector plugin</span>
+	<span class="nx">grunt</span><span class="p">.</span><span class="nx">registerTask</span><span class="p">(</span><span class="s1">&#39;copy-bower-deps&#39;</span><span class="p">,</span> <span class="s1">&#39;Copy bower dependencies&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+	    <span class="kd">var</span> <span class="nx">dest</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">ext</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">tokens</span> <span class="o">=</span> <span class="kc">null</span><span class="p">,</span> <span class="nx">data</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+	    <span class="k">for</span> <span class="p">(</span> <span class="kd">var</span> <span class="nx">ext</span> <span class="k">in</span> <span class="nx">files</span><span class="p">.</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+		<span class="nx">data</span> <span class="o">=</span> <span class="nx">grunt</span><span class="p">.</span><span class="nx">file</span><span class="p">.</span><span class="nx">read</span><span class="p">(</span><span class="nx">files</span><span class="p">.</span><span class="nx">config</span><span class="p">[</span><span class="nx">ext</span><span class="p">]);</span>
+		<span class="nx">tokens</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s2">&quot;\n&quot;</span><span class="p">);</span>
+		<span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">tokens</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">2</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+		    <span class="nx">dest</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">dirs</span><span class="p">[</span><span class="nx">ext</span><span class="p">],</span> <span class="p">((</span><span class="s1">&#39;000&#39;</span> <span class="o">+</span> <span class="nx">i</span><span class="p">).</span><span class="nx">substr</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="nx">ext</span><span class="p">);</span>
+		    <span class="nx">grunt</span><span class="p">.</span><span class="nx">file</span><span class="p">.</span><span class="nx">copy</span><span class="p">(</span><span class="nx">tokens</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">dest</span><span class="p">);</span>
+		<span class="p">}</span>
+	    <span class="p">}</span>
+	<span class="p">});</span>
+
+	<span class="c1">// Concat all bower dependencies to a single file</span>
+	<span class="nx">grunt</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">merge</span><span class="p">({</span>
+	    <span class="nx">concat</span> <span class="o">:</span> <span class="p">{</span>
+		<span class="nx">options</span> <span class="o">:</span> <span class="p">{</span>
+		    <span class="nx">separator</span> <span class="o">:</span> <span class="s1">&#39;;\n&#39;</span><span class="p">,</span>
+		<span class="p">},</span>
+		<span class="nx">bower_all_css</span> <span class="o">:</span> <span class="p">{</span>
+		    <span class="nx">src</span> <span class="o">:</span> <span class="p">[</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">dirs</span><span class="p">.</span><span class="nx">css</span><span class="p">,</span> <span class="s1">&#39;*.css&#39;</span><span class="p">)</span> <span class="p">],</span>
+		    <span class="nx">dest</span> <span class="o">:</span> <span class="nx">files</span><span class="p">.</span><span class="nx">out</span><span class="p">.</span><span class="nx">css</span><span class="p">,</span>
+		<span class="p">},</span>
+		<span class="nx">bower_all_js</span> <span class="o">:</span> <span class="p">{</span>
+		    <span class="nx">src</span> <span class="o">:</span> <span class="p">[</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">dirs</span><span class="p">.</span><span class="nx">js</span><span class="p">,</span> <span class="s1">&#39;*.js&#39;</span><span class="p">)</span> <span class="p">],</span>
+		    <span class="nx">dest</span> <span class="o">:</span> <span class="nx">files</span><span class="p">.</span><span class="nx">out</span><span class="p">.</span><span class="nx">js</span><span class="p">,</span>
+		<span class="p">}</span>
+	    <span class="p">}</span>
+	<span class="p">});</span>
+
+	<span class="c1">// Copy files to the application directory</span>
+	<span class="nx">grunt</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">merge</span><span class="p">({</span>
+	    <span class="nx">copy</span> <span class="o">:</span> <span class="p">{</span>
+		<span class="nx">bower_all</span> <span class="o">:</span> <span class="p">{</span>
+		    <span class="nx">files</span> <span class="o">:</span> <span class="p">[</span> <span class="p">{</span>
+			<span class="nx">expand</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+			<span class="nx">src</span> <span class="o">:</span> <span class="p">[</span> <span class="nx">files</span><span class="p">.</span><span class="nx">out</span><span class="p">.</span><span class="nx">css</span><span class="p">,</span> <span class="nx">files</span><span class="p">.</span><span class="nx">out</span><span class="p">.</span><span class="nx">js</span> <span class="p">],</span>
+			<span class="nx">dest</span> <span class="o">:</span> <span class="s1">&#39;app/lib&#39;</span><span class="p">,</span> <span class="c1">// path is up to your project structure</span>
+			<span class="nx">flatten</span> <span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+			<span class="nx">filter</span> <span class="o">:</span> <span class="s1">&#39;isFile&#39;</span>
+		    <span class="p">},</span> <span class="p">],</span>
+		<span class="p">}</span>
+	    <span class="p">}</span>
+	<span class="p">});</span>
+
+	<span class="c1">// create files to inject the bower dependencies resolved by the</span>
+	<span class="c1">// grunt-injector plugin</span>
+	<span class="nx">grunt</span><span class="p">.</span><span class="nx">file</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">files</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">css</span><span class="p">,</span> <span class="s1">&#39;&lt;!-- injector:css --&gt;&lt;!-- endinjector --&gt;&#39;</span><span class="p">);</span>
+	<span class="nx">grunt</span><span class="p">.</span><span class="nx">file</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">files</span><span class="p">.</span><span class="nx">config</span><span class="p">.</span><span class="nx">js</span><span class="p">,</span> <span class="s1">&#39;&lt;!-- injector:js --&gt;&lt;!-- endinjector --&gt;&#39;</span><span class="p">);</span>
+	<span class="nx">grunt</span><span class="p">.</span><span class="nx">task</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="s1">&#39;injector:bower_all_config&#39;</span><span class="p">);</span>
+	<span class="c1">// Copy dependencies resolved by grunt-injector</span>
+	<span class="nx">grunt</span><span class="p">.</span><span class="nx">task</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="s1">&#39;copy-bower-deps&#39;</span><span class="p">);</span>
+	<span class="c1">// Concat bower dependencies into a single file</span>
+	<span class="nx">grunt</span><span class="p">.</span><span class="nx">task</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="s1">&#39;concat:bower_all_css&#39;</span><span class="p">);</span>
+	<span class="nx">grunt</span><span class="p">.</span><span class="nx">task</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="s1">&#39;concat:bower_all_js&#39;</span><span class="p">);</span>
+	<span class="c1">// Copy the built file to the application directory</span>
+	<span class="nx">grunt</span><span class="p">.</span><span class="nx">task</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="s1">&#39;copy:bower_all&#39;</span><span class="p">);</span>
+	<span class="c1">// inject the concatened bower dependencies to the index.html</span>
+	<span class="nx">grunt</span><span class="p">.</span><span class="nx">task</span><span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="s1">&#39;injector:bower_all&#39;</span><span class="p">);</span>
+<span class="p">});</span>
+    
+<span class="nx">grunt</span><span class="p">.</span><span class="nx">registerTask</span><span class="p">(</span><span class="s1">&#39;build:prod&#39;</span><span class="p">,</span> <span class="p">[</span> <span class="s1">&#39;inject:bower:min:concat&#39;</span> <span class="p">]);</span></code></pre></div>
+
+<hr />
+
+<p>In this example we just handle the bower dependencies. We still have to take care of the code of the application. This might be the subject of a future post.</p>
+
+<hr />
+
+<p><a href="/assets/resources/front-side-environment-management-example/Gruntfile.js">download <code>Gruntfile.js</code></a></p>
+
+</p>
+</div>
+</div>
+
+			<div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+				<div class="sidebar-module sidebar-module-inset">
+					<h4>About</h4>
+					<p>
+						Hi, my name is Gilles Navarro. I've been writing down code for quite a while now and this blog is to share some stuff I've learnt along the way. 
+					</p>
+				</div>
+				<div class="sidebar-module">
+					<aside><h4>Categories</h4>
+<ul class="list-unstyled">
+	
+	<li>
+	<i class="fa fa-angle-double-right"></i>
+	<a href="/categories/angularjs/index.html">angularjs</a>
+	<li>
+	<i class="fa fa-angle-double-right"></i>
+	<a href="/categories/agility/index.html">agility</a>
+	</li>
+</ul>
+</aside>
+				</div>
+				<div class="sidebar-module">
+					<aside><h4>Archives</h4>
+<ul class="list-unstyled">
+
+  
+  
+  
+  
+  
+    <li>
+    	<i class="fa fa-angle-double-right"></i>&nbsp;<a href="/2015/07/index.html">July 2015</a>
+    </li>
+     
+  
+
+  
+  
+  
+  
+  
+
+  
+  
+  
+  
+  
+    <li>
+    	<i class="fa fa-angle-double-right"></i>&nbsp;<a href="/2014/05/index.html">May 2014</a>
+    </li>
+     
+  
+
+</ul>
+
+</aside>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<footer class="blog-footer">
+		<p>
+			<a href="https://github.com/gnavarro77"><i class="fa fa-github fa-2x"></i> <span>find me on github</span></a>
+		</p>
+	</footer>
+
+</body>
+</html>
+
