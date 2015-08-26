@@ -7,13 +7,17 @@
 
 <title>Front side environment management example</title> 
 
+<!-- <link rel="stylesheet" -->
+<!-- 	href="/assets/bower_components/bootstrap-css/css/bootstrap.css"> -->
+<!-- <link rel="stylesheet" -->
+<!-- 	href="/assets/bower_components/bootstrap-css/css/bootstrap-theme.css"> -->
 <link rel="stylesheet"
-	href="/assets/bower_components/bootstrap-css/css/bootstrap.css">
-<link rel="stylesheet"
-	href="/assets/bower_components/bootstrap-css/css/bootstrap-theme.css">
-<link rel="stylesheet" href="/assets/css/solarized.css">
+	href="/assets/bower_components/normalize.css/normalize.css" />
+<link rel="stylesheet" href="/assets/css/solarized-dark.css">
 <link rel="stylesheet"
 	href="/assets/bower_components/font-awesome/css/font-awesome.min.css">
+<link href='http://fonts.googleapis.com/css?family=Open+Sans+Condensed:300' rel='stylesheet' type='text/css'>	
+<link href='http://fonts.googleapis.com/css?family=Lato' rel='stylesheet' type='text/css'>
 <link rel="stylesheet" href="/assets/css/blog.css">
 
 <script type="text/javascript"
@@ -21,42 +25,51 @@
 
 </head>
 <body>
-<body>
 
-	<nav class="navbar navbar-default navbar-static-top">
-		<div class="container">
-			<div class="navbar-header">
-				<a class="navbar-brand" href="#">De choses et d'autres</a>
-			</div>
-			<div id="navbar" class="navbar-collapse collapse">
-<!-- 				<ul class="nav navbar-nav"> -->
-<!-- 					<li class="active"><a href="#">Home</a></li> -->
-<!-- 				</ul> -->
-				<ul class="nav navbar-nav navbar-right">
-					<li><a href="https://github.com/gnavarro77" title="find me on github"><i class="fa fa-github"></i></a></li>
-				</ul>
-			</div>
-		</div>
-	</nav>
+	<aside>
+		<div class="stripe"></div>
+		<section>
+			<h1>
+				<em>Gilles Navarro</em> 
+			</h1>
+			<p>
+			Hi, I've been writing down some code for quite a while now and this blog is to share some stuff I learned along the way. 
+			</p>
+			
+			<nav class="elsewhere">
+			<ul>
+				<li>
+					<a href="https://github.com/gnavarro77"
+						title="find me on github"><i class="fa fa-2x fa-github"></i></a>
+				</li>
+				<li>
+					<a href="https://github.com/gnavarro77"
+						title="find me on linkedin "><i class="fa fa-2x fa-linkedin"></i></a>
+				</li>
+			</ul>
+		</nav>
+			
+		</section>
+		
+		
+		
+<!-- 		<div class="legal"> -->
+<!-- 			<small class="copyright">&copy; Glenn Naessens - 2015</small> - <a -->
+<!-- 				class="rss" href="/feed/atom/">RSS</a> <small class="credits">Picture -->
+<!-- 				by <a href="http://www.nilssonlee.se">Jonas Nilsson Lee</a> -->
+<!-- 			</small> -->
+<!-- 		</div> -->
+	</aside>
 
-	<div class="container">
+	<main role="main">
+		<div><article>
+	<h1>Front side environment management example </h1>
+	<aside>
+		<time datetime="2015-July-26">July 26, 2015</time>
+	</aside>
+	<p><p>In this post we are going to consider a front side application built using <code>AngularJS</code>, <code>Grunt</code>, <code>Bower</code> as part of its technical stack.</p>
 
-		<div class="row">
-
-			<div class="col-sm-8 blog-main"><div class="blog-post">
-	<h2 class="blog-post-title">
-		Front side environment management example 
-	</h2>
-	<p class="blog-post-meta">
-		July 26, 2015 by <a href="#">Gilles Navarro</a>
-	</p>
-	<p><blockquote>
-  <p>In this post we are going to consider a front side application built using <code>AngularJS</code>, <code>Grunt</code>, <code>Bower</code> as part of its technical stack.</p>
-</blockquote>
-
-<blockquote>
-  <p>For the purpose of this example we will only consider <code>development</code> and <code>production</code> environments.</p>
-</blockquote>
+<p>For the purpose of this example we will only consider <code>development</code> and <code>production</code> environments.</p>
 
 <h3 id="why-the-dev-and-the-production-environments-should-differ">Why the <code>dev</code> and the <code>production</code> environments should differ?</h3>
 
@@ -104,28 +117,28 @@
 <p>then we declare the injection into the <code>Gruntfile.js</code> (customize to match your project structure).</p>
 
 <div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">injector</span> <span class="o">:</span> <span class="p">{</span>
-		<span class="c1">// inject bower css and js dependencies into the file index.html</span>
-	    <span class="nx">bower</span> <span class="o">:</span> <span class="p">{</span>
-			<span class="nx">options</span> <span class="o">:</span> <span class="p">{</span>
-			    <span class="nx">starttag</span> <span class="o">:</span> <span class="s1">&#39;&lt;!-- bower: --&gt;&#39;</span><span class="p">,</span>
-			    <span class="nx">endtag</span> <span class="o">:</span> <span class="s1">&#39;&lt;!-- endbower --&gt;&#39;</span><span class="p">,</span>
-			    <span class="nx">addRootSlash</span> <span class="o">:</span> <span class="kc">false</span> <span class="c1">// depends on your project</span>
-			<span class="p">},</span>
-			<span class="nx">files</span> <span class="o">:</span> <span class="p">{</span>
-			    <span class="s1">&#39;index.html&#39;</span> <span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;bower.json&#39;</span> <span class="p">],</span>
-			<span class="p">}</span>
-	    <span class="p">},</span>
-	    <span class="c1">// </span>
-	    <span class="nx">app</span> <span class="o">:</span> <span class="p">{</span>
-			<span class="nx">options</span> <span class="o">:</span> <span class="p">{</span>
-			    <span class="nx">addRootSlash</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="c1">// depends on your project</span>
-			    <span class="nx">relative</span> <span class="o">:</span> <span class="kc">true</span> <span class="c1">// depends on your project</span>
-			<span class="p">},</span>
-			<span class="nx">files</span> <span class="o">:</span> <span class="p">{</span>
-			    <span class="s1">&#39;index.html&#39;</span> <span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;ordered application js files&#39;</span><span class="p">,</span> <span class="s1">&#39;another file&#39;</span><span class="p">,</span> <span class="s1">&#39;...&#39;</span> <span class="p">],</span>
-			<span class="p">}</span>
-	    <span class="p">}</span>
-	<span class="p">}</span></code></pre></div>
+	<span class="c1">// inject bower css and js dependencies into the file index.html</span>
+    <span class="nx">bower</span> <span class="o">:</span> <span class="p">{</span>
+		<span class="nx">options</span> <span class="o">:</span> <span class="p">{</span>
+		    <span class="nx">starttag</span> <span class="o">:</span> <span class="s1">&#39;&lt;!-- bower: --&gt;&#39;</span><span class="p">,</span>
+		    <span class="nx">endtag</span> <span class="o">:</span> <span class="s1">&#39;&lt;!-- endbower --&gt;&#39;</span><span class="p">,</span>
+		    <span class="nx">addRootSlash</span> <span class="o">:</span> <span class="kc">false</span> <span class="c1">// depends on your project</span>
+		<span class="p">},</span>
+		<span class="nx">files</span> <span class="o">:</span> <span class="p">{</span>
+		    <span class="s1">&#39;index.html&#39;</span> <span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;bower.json&#39;</span> <span class="p">],</span>
+		<span class="p">}</span>
+    <span class="p">},</span>
+    <span class="c1">// </span>
+    <span class="nx">app</span> <span class="o">:</span> <span class="p">{</span>
+		<span class="nx">options</span> <span class="o">:</span> <span class="p">{</span>
+		    <span class="nx">addRootSlash</span> <span class="o">:</span> <span class="kc">false</span><span class="p">,</span> <span class="c1">// depends on your project</span>
+		    <span class="nx">relative</span> <span class="o">:</span> <span class="kc">true</span> <span class="c1">// depends on your project</span>
+		<span class="p">},</span>
+		<span class="nx">files</span> <span class="o">:</span> <span class="p">{</span>
+		    <span class="s1">&#39;index.html&#39;</span> <span class="o">:</span> <span class="p">[</span> <span class="s1">&#39;ordered application js files&#39;</span><span class="p">,</span> <span class="s1">&#39;another file&#39;</span><span class="p">,</span> <span class="s1">&#39;...&#39;</span> <span class="p">],</span>
+		<span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span></code></pre></div>
 
 <p>and with the following registered <code>Grunt</code> task</p>
 
@@ -275,33 +288,30 @@ As the order in which files are concatened is imperative I use a trick and use t
 <p><a href="/assets/resources/front-side-environment-management-example/Gruntfile.js">download <code>Gruntfile.js</code></a></p>
 
 </p>
+</article>
 </div>
-</div>
-
-			<div class="col-sm-3 col-sm-offset-1 blog-sidebar">
-				<div class="sidebar-module sidebar-module-inset">
-					<h4>About</h4>
-					<p>
-						Hi, my name is Gilles Navarro. I've been writing down code for quite a while now and this blog is to share some stuff I've learnt along the way. 
-					</p>
-				</div>
-				<div class="sidebar-module">
-					<aside><h4>Categories</h4>
-<ul class="list-unstyled">
+<!-- 	<footer class="blog-footer"> -->
+<!-- 		<p> -->
+<!-- 			<a href="https://github.com/gnavarro77"><i -->
+<!-- 				class="fa fa-github fa-2x"></i> <span>find me on github</span></a> -->
+<!-- 		</p> -->
+<!-- 	</footer>  -->
+	</main>
+	
+	<aside class="right" role="navigation">
+		<section>
+			<h4>Categories</h4>
+<ul >
 	
 	<li>
-	<i class="fa fa-angle-double-right"></i>
 	<a href="/categories/angularjs/index.html">angularjs</a>
 	<li>
-	<i class="fa fa-angle-double-right"></i>
 	<a href="/categories/agility/index.html">agility</a>
 	</li>
 </ul>
-</aside>
-				</div>
-				<div class="sidebar-module">
-					<aside><h4>Archives</h4>
-<ul class="list-unstyled">
+
+			<h4>Archives</h4>
+<ul>
 
   
   
@@ -309,7 +319,7 @@ As the order in which files are concatened is imperative I use a trick and use t
   
   
     <li>
-    	<i class="fa fa-angle-double-right"></i>&nbsp;<a href="/2015/07/index.html">July 2015</a>
+    	<a href="/2015/07/index.html">July 2015</a>
     </li>
      
   
@@ -326,25 +336,18 @@ As the order in which files are concatened is imperative I use a trick and use t
   
   
     <li>
-    	<i class="fa fa-angle-double-right"></i>&nbsp;<a href="/2014/05/index.html">May 2014</a>
+    	<a href="/2014/05/index.html">May 2014</a>
     </li>
      
   
 
 </ul>
 
-</aside>
-				</div>
-			</div>
-		</div>
-	</div>
 
-	<footer class="blog-footer">
-		<p>
-			<a href="https://github.com/gnavarro77"><i class="fa fa-github fa-2x"></i> <span>find me on github</span></a>
-		</p>
-	</footer>
-
+		</section>
+	</aside>
+	
+	
 </body>
 </html>
 
